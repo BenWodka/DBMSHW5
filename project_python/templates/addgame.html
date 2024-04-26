@@ -1,0 +1,53 @@
+<HTML>
+
+    <head>
+        <meta charset = "UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+       <title>Add Game</title>
+    </head>
+ 
+    <BODY class = "">
+       <div id="topnav">
+          <a href="home.html">Home</a> <!--Home page-->
+          <a href="addgame.html">Add Game</a> <!--Step 1-->
+          <a href="addplayer.html">Add Player</a> <!--Step 2-->
+          <a href="viewplayers.html">View Players</a> <!--Steps 3 and 4 (players on team and positions on a team)-->>
+          <a href="standings.html">View Standings</a> <!--Step 5-->
+          <a href="viewgames.html">View Games by Team</a> <!--Step 6-->
+          <a href="viewresults.html">View Game Results</a> <!--Step 7-->       
+       </div>
+       
+       <div id="messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+       </div>
+
+       <div id="addgame">
+            <h2>Add Game to Database</h2>
+            <form action="{{ url_for('project.addGame') }}" method="post">
+                <label for="team1">Team 1</label><br>
+                <input type="text" id="team1" name="team1"><br>
+                <label for="team2">Team 2</label><br>
+                <input type="text" id="team2" name="team2"><br>
+                <label for="score1">Score 1</label><br>
+                <input type="text" id="score1" name="score1"><br>
+                <label for="score2">Score 2</label><br>
+                <input type="text" id="score2" name="score2"><br>
+                <label for="date">Date YYYY-MM-DD</label><br>
+                <input type="text" id="date" name="date"><br>
+                <input type="submit" value="Add Game">
+
+            </form>
+
+
+       </div>
+
+
+    </BODY>
+ </HTML>
+ 
