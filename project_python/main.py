@@ -43,9 +43,6 @@ def getTeamID(teamName):
         return None  # Return None if no TeamID is found
 
 def addgame(values):
-    # values[1] = "'" + values[1] + "'"  # Remove leading and trailing single quotes
-    # values[2] = "'" + values[2] + "'"
-
     #convert team name into team ID
     openDB()
     gameID = python_db.nextId('Game')
@@ -53,12 +50,8 @@ def addgame(values):
 
     values[0] = gameID
 
-    print(f"\nvalues[1] == {values[1]}\n")
-
     team1 = str(values[1])
-    print(f"\nteam1: (before getTeamID) {team1}\n")
     team1ID = getTeamID(team1)
-    print(f"\nteam1: (before getTeamID) {team1}\n")
 
     values[1] = team1ID
 
@@ -66,17 +59,24 @@ def addgame(values):
     team2ID = getTeamID(team2)
     values[2] = team2ID
 
-    # Convert the values list to a string format for SQL query
-    # values_str = ', '.join(map(str, values))
-
-    #query = "INSERT INTO Game VALUES (%s, %s, %s, %s, %s, %s)"
-    
-    #print(f"\nDATE(addGame):\n{values[5]}") #debug
     openDB()
     python_db.insertGame('Game', values)
     closeDB()
 
+def addplayer(values):
+    openDB()
+    playerID = python_db.nextIdPlayer('Player')
+    closeDB()
 
+    values[0] = playerID
+
+    team = str(values[1])
+    teamID = getTeamID(team)
+    values[1] = teamID
+
+    openDB()
+    python_db.insert('Player', values)
+    closeDB()
 
 def main(operation, values):
     # running = True
@@ -86,8 +86,8 @@ def main(operation, values):
     if operation == "addgame":
         addgame(values)
     elif operation == "addplayer":
-        # Handle add player operation
-        pass
+        addplayer(values)
+        
         # case 3:
         #     print()
         # case 4:

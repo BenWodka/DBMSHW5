@@ -3,6 +3,20 @@ error_reporting(E_ALL); // Enable error reporting
 ini_set('display_errors', 1);
 session_start();
 
+function errorReport($output)
+{
+    file_put_contents('/~bmw032/project_python/logfile.txt', $output, FILE_APPEND);
+
+    // Check the output for success or failure
+    if ($output === "success") {
+        // If successful, redirect back to the add game page with a success message
+        $_SESSION['flash_message'] = "Game added successfully!";
+    } else {
+        // If failure, redirect back to the add game page with an error message
+        $_SESSION['error_message'] = "Failed to add game.";
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action']; // A hidden input field in your forms that tells you which form was submitted
 
@@ -23,25 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $command = escapeshellcmd($command);
 
             // Execute the command and capture the output
-            //$output = shell_exec($command);
             $output = system($command);
-            file_put_contents('/~bmw032/project_python/logfile.txt', $output, FILE_APPEND);
 
+            errorReport($output);
 
-            // Check the output for success or failure
-            if ($output === "success") {
-                // If successful, redirect back to the add game page with a success message
-                $_SESSION['flash_message'] = "Game added successfully!";
-            } else {
-                // If failure, redirect back to the add game page with an error message
-                $_SESSION['error_message'] = "Failed to add game.";
-            }
             break;
-        case 'addPlayer':
-            // Collect and sanitize 'add player' data
-            // Call Python script with the data
+        case 'addplayer':
+            // $playerID = escapeshellarg($_POST['playerID']);
+            $name = escapeshellarg($_POST['name']);
+            $team = escapeshellarg($_POST['TeamID']);
+            $position = escapeshellarg($_POST['position']);
+            
+            $command = "python3 main.py $action 0 $team $name $position";
+            $command = escapeshellcmd($command);
+            $output = system($command);
+            errorReport($output);
+
             break;
-        // Handle other actions as needed
     }
 
     header('Location: /~bmw032/project_python/' . $action . '.php');

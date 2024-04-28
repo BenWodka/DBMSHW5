@@ -37,7 +37,8 @@ def executeSelect(query, params=None):
 
 
 def insert(table, values):
-    values_str = ', '.join(map(str, values))
+    values_str = ', '.join(["'" + str(val) + "'" for val in values])    
+    print(f"\nvalues_str: {values_str}\n")
     query = "INSERT into " + table + " values (" + values_str + ")" + ';'
     cursor.execute(query)
     conn.commit()
@@ -57,7 +58,13 @@ def insertGame(table, values):
 
 
 def nextId(table):
-    query = "select IFNULL(max(GameID), 0) as max_id from " + table
+    query = "SELECT IFNULL(MAX(GameID), 0) AS max_id FROM " + table 
+    cursor.execute(query)
+    result = cursor.fetchall()[0][0]
+    return 1 if result is None else int(result) + 1
+
+def nextIdPlayer(table):
+    query = "SELECT IFNULL(MAX(playerID), 0) AS max_id FROM " + table 
     cursor.execute(query)
     result = cursor.fetchall()[0][0]
     return 1 if result is None else int(result) + 1
