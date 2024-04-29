@@ -53,7 +53,7 @@ def addgame(values):
     team1 = str(values[1])
     team1ID = getTeamID(team1)
     values[1] = team1ID
-    
+
     team2 = str(values[2])
     team2ID = getTeamID(team2)
     values[2] = team2ID
@@ -115,15 +115,37 @@ def viewposition(values):
     return playersjson
 
 def standings():
-    sql = " SELECT Conference, Location, Nickname, COUNT(g1.TeamID1) AS TotalWins \
-            FROM Team t \
-            LEFT JOIN Game g1 ON t.TeamID = g1.TeamID1 AND g1.Score1 > g1.Score2 \
-            GROUP BY t.Conference, t.Location, t.Nickname \
-            ORDER BY t.Conference, TotalWins DESC"
+    # sql = " SELECT Conference, Location, Nickname, COUNT(g1.TeamID1) AS TotalWins \
+    #         FROM Team t \
+    #         LEFT JOIN Game g1 ON t.TeamID = g1.TeamID1 AND g1.Score1 > g1.Score2 \
+    #         GROUP BY t.Conference, t.Location, t.Nickname \
+    #         ORDER BY t.Conference, TotalWins DESC"
+    sql = """
+            SELECT 
+            t.Conference,
+            t.Location,
+            t.Nickname,
+            CAST(SUM(CASE WHEN (g.TeamID1 = t.TeamID AND g.Score1 > g.Score2) OR (g.TeamID2 = t.TeamID AND g.Score2 > g.Score1) THEN 1 ELSE 0 END) AS SIGNED) AS Wins,
+            CAST(SUM(CASE WHEN (g.TeamID1 = t.TeamID AND g.Score1 < g.Score2) OR (g.TeamID2 = t.TeamID AND g.Score2 < g.Score1) THEN 1 ELSE 0 END) AS SIGNED) AS Losses
+            FROM Team t
+            LEFT JOIN Game g ON t.TeamID = g.TeamID1 OR t.TeamID = g.TeamID2
+            GROUP BY t.Conference, t.Location, t.Nickname
+            ORDER BY t.Conference, Wins DESC, Losses
+        """
     openDB()
-    teams = python_db.executeSelect(sql)
+    result = python_db.executeSelect(sql)
     closeDB()
-    return json.dumps(teams)
+    standings = [
+            {
+                "Conference": row[0],
+                "Location": row[1],
+                "Nickname": row[2],
+                "Wins": int(row[3]),
+                "Losses": int(row[4])
+            } for row in result
+        ]
+    print(json.dumps(standings))
+    return json.dumps(standings)
 
 def gamesbyteam(team_name):
     sql = "SELECT t1.Location AS HomeLocation, t1.Nickname AS HomeNickname, t2.Location AS AwayLocation, t2.Nickname AS AwayNickname, g.date, g.Score1, g.Score2, \
@@ -161,8 +183,8 @@ def main(operation, values):
     elif operation == "viewposition":
         #print("Debug: Starting viewposition with values:", values)
         viewposition(values)
-    elif operation == "standings":
-        standings(values)
+    elif operation == "viewstandings":
+        standings()
     elif operation == "gamesbyteam":
         gamesbyteam(values)
     elif operation == "resultsbydate":

@@ -1,6 +1,7 @@
 <?php
 session_start();
-error_reporting(E_ALL); // Enable error reporting
+ob_start();
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
@@ -65,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             
             //print_r($_SESSION['players']);
             session_write_close();
+
             break;
 
         case 'viewstandings':
@@ -73,16 +75,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $output = shell_exec($command);
 
             if ($output) {
+                //echo "<pre>standings: $output</pre>";
                 $standings = json_decode($output, true);
+
+                //echo '<pre>Decoded JSON: '; print_r($standings); echo '</pre>';                print_r($_SESSION['standings']);
                 $_SESSION['standings'] = $standings;
+                // $_SESSION['standings'] = array(
+                //     array("Conference" => "NFC", "Location" => "Arizona", "Nickname" => "Cardinals", "Wins" => 10, "Losses" => 2),
+                //     array("Conference" => "AFC", "Location" => "New England", "Nickname" => "Patriots", "Wins" => 12, "Losses" => 1)
+                // );
+                //echo '<pre>'; print_r($_SESSION['standings']); echo '</pre>';
             } else {
                 echo "No output received from Python script.";
             }
+            //echo '<pre> after if '; print_r($_SESSION); echo '</pre>';
+            session_write_close();
+
             break;
 
     }
 
-    header('Location: /~bmw032/project_python/viewplayers.php');
+    header('Location: /~bmw032/project_python/standings.php');
     exit;
 
 } else {
@@ -90,4 +103,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     header('Location: /~bmw032/project_python/home.php');
     exit;
 }
+ob_end_flush();
 ?>

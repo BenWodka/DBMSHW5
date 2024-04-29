@@ -1,39 +1,9 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+echo "Errors should be visible now";
+
 session_start();
-$teams = [
-    'Arizona Cardinals',
-    'Atlanta Falcons',
-    'Baltimore Ravens',
-    'Buffalo Bills',
-    'Carolina Panthers',
-    'Chicago Bears',
-    'Cincinnati Bengals',
-    'Cleveland Browns',
-    'Dallas Cowboys',
-    'Denver Broncos',
-    'Detroit Lions',
-    'Green Bay Packers',
-    'Houston Texans',
-    'Indianapolis Colts',
-    'Jacksonville Jaguars',
-    'Kansas City Chiefs',
-    'Las Vegas Raiders',
-    'Los Angeles Chargers',
-    'Los Angeles Rams',
-    'Miami Dolphins',
-    'Minnesota Vikings',
-    'New England Patriots',
-    'New Orleans Saints',
-    'New York Giants',
-    'New York Jets',
-    'Philadelphia Eagles',
-    'Pittsburgh Steelers',
-    'San Francisco 49ers',
-    'Seattle Seahawks',
-    'Tampa Bay Buccaneers',
-    'Tennessee Titans',
-    'Washington Commanders'
-];
 
 ?>
 
@@ -73,8 +43,12 @@ $teams = [
     <?php endif; ?>
 
 
-    <div id="standings">
+    <div id="viewstandings">
         <h2>NFL Standings</h2>
+        <form action="/~bmw032/project_python/viewplayershandler.php" method="get"> 
+        <input type="hidden" name="action" value="viewstandings">
+        <button type="submit" style="visibility: hidden;">Load Standings</button>
+        </form>
         <table class="standings-table">
             <thead>
                 <tr>
@@ -82,24 +56,21 @@ $teams = [
                     <th>Team</th>
                     <th>Wins</th>
                     <th>Losses</th>
-                    <th>Conference Wins</th>
-                    <th>Conference Losses</th>
                 </tr>
             </thead>
             <tbody>
-            <?php if (isset($_SESSION['standings']) && !empty($_SESSION['standings'])): ?>
-                    <?php foreach ($_SESSION['standings'] as $standing): ?>
-                        <tr>
+            <?php if (!empty($_SESSION['standings'])): ?>
+                
+                <?php foreach ($_SESSION['standings'] as $standing): ?>
+                    <tr>
                             <td><?= htmlspecialchars($standing['Conference']) ?></td>
                             <td><?= htmlspecialchars($standing['Location']) ?> <?= htmlspecialchars($standing['Nickname']) ?></td>
                             <td><?= htmlspecialchars($standing['Wins']) ?></td>
                             <td><?= htmlspecialchars($standing['Losses']) ?></td>
-                            <td><?= htmlspecialchars($standing['ConferenceWins']) ?></td>
-                            <td><?= htmlspecialchars($standing['ConferenceLosses']) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="6">No standings data available.</td></tr>
+                    <tr><td colspan="4">No standings data available.</td></tr>
                 <?php endif; ?>
                 <?php
                     // Example PHP code that fetches standings data and populates the table
