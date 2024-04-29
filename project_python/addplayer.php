@@ -20,8 +20,6 @@
         <a href="/~bmw032/project_python/viewresults.php">View Game Results</a>
     </div>
 
-    <!-- PHP for displaying messages -->
-    <!-- PHP for displaying messages -->
     <?php if (isset($_SESSION['flash_message'])): ?>
         <div class="alert alert-success">
             <?php echo $_SESSION['flash_message']; ?>
@@ -39,7 +37,7 @@
 
     <div id="addplayer">
         <h2>Add Player to a Team</h2>
-        <!-- The action must point to a PHP script that handles the POST request -->
+        <!-- Points to formhandler.php that handles the POST request -->
         <form action="/~bmw032/project_python/formhandler.php" method="post">
             <input type="hidden" name="action" value="addplayer">
             <!-- <input type="hidden" name="playerID" value="playerID"> -->

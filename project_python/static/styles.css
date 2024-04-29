@@ -29,3 +29,14 @@
     background-color: #ddd; 
     color: black;
 }
+
+#viewplayers .form-group {
+    display: inline-block;
+    margin-right: 20px; /* Adds space between the dropdowns */
+}
+#viewplayers label {
+    margin-right: 10px; /* Adds space between the label and the dropdown */
+}
+#viewplayers select {
+    width: 200px; /* Adjust width  */
+}
